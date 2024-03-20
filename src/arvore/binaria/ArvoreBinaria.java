@@ -1,11 +1,15 @@
-package arvore;
+package arvore.binaria;
 
 import java.util.ArrayList;
 
+import arvore.No;
+import arvore.TraversalMode;
+import arvore.ValueNotFoundException;
+
 public class ArvoreBinaria {
-  private No root;
-  private int size;
-  private ArrayList<No> nodes;
+  protected No root;
+  protected int size;
+  protected ArrayList<No> nodes;
 
   public ArvoreBinaria() {
     this.root = null;
@@ -39,7 +43,6 @@ public class ArvoreBinaria {
     if (!this.hasRoot()) {
       this.root = new No(value, null, null, null);
       this.size += 1;
-      // System.out.println("Adicionando " + this.root.toString());
       return;
     }
 
@@ -56,15 +59,14 @@ public class ArvoreBinaria {
     } else {
       parent.setChildRight(newNo);
     }
-    // System.out.println("Adicionando " + newNo.toString());
     this.size += 1;
   }
 
-  private No search(Object value) { // busca um valor na árvore
+  protected No search(Object value) { // busca um valor na árvore
     return this.search(this.root, value);
   }
 
-  private No search(No no, Object value) { // busca um valor a partir de um nó
+  protected No search(No no, Object value) { // busca um valor a partir de um nó
     if (no.isLeaf() || (int) no.getValue() == (int) value)
       return no;
 
@@ -93,8 +95,7 @@ public class ArvoreBinaria {
     this.size -= 1;
   }
 
-  private void remove(No no) {
-    // System.out.println("Removendo " + no.toString());
+  protected void remove(No no) {
     if (no.isLeaf()) {
       removeLeaf(no);
     }
@@ -106,7 +107,7 @@ public class ArvoreBinaria {
     }
   }
 
-  private void removeLeaf(No no) {
+  protected void removeLeaf(No no) {
     if (this.isRoot(no)) {
       this.root = null;
       return;
@@ -122,7 +123,7 @@ public class ArvoreBinaria {
     parent.setChildRight(null);
   }
 
-  private void removeOneChild(No no) {
+  protected void removeOneChild(No no) {
     No child = no.containsChildLeft() ? no.getChildLeft() : no.getChildRight();
 
     No parent = no.getParent();
@@ -142,7 +143,7 @@ public class ArvoreBinaria {
     child.setParent(parent);
   }
 
-  private void removeTwoChilds(No no) {
+  protected void removeTwoChilds(No no) {
     No sucessor = no.getChildRight();
     while (sucessor.containsChildLeft()) {
       sucessor = sucessor.getChildLeft();
@@ -160,7 +161,7 @@ public class ArvoreBinaria {
     return this.height(this.root);
   }
 
-  private int height(No no) { // altura do nó até as folhas
+  protected int height(No no) { // altura do nó até as folhas
     if (no == null || no.isLeaf()) {
       return 0;
     }
@@ -181,7 +182,7 @@ public class ArvoreBinaria {
     return this.depth(this.root);
   }
 
-  private int depth(No no) { // profundidade do nó até a raiz
+  protected int depth(No no) { // profundidade do nó até a raiz
     if (no == null || this.isRoot(no)) {
       return 0;
     }
@@ -190,7 +191,7 @@ public class ArvoreBinaria {
     return parentDepth + 1;
   }
 
-  private void traverse(No no, TraversalMode mode) {
+  protected void traverse(No no, TraversalMode mode) {
     if (no == null) {
       return;
     }
@@ -212,13 +213,7 @@ public class ArvoreBinaria {
     }
   }
 
-  public enum TraversalMode {
-    PRE_ORDER,
-    IN_ORDER,
-    POST_ORDER
-  }
-
-  private ArrayList<No> traverseAndCollectNodes(TraversalMode mode) {
+  protected ArrayList<No> traverseAndCollectNodes(TraversalMode mode) {
     this.nodes = new ArrayList<>();
     this.traverse(this.root, mode);
     return this.nodes;
@@ -235,7 +230,7 @@ public class ArvoreBinaria {
     this.printMatriz(matriz);
   }
 
-  private int[][] populateMatriz(ArrayList<No> nosInMode, int lines, int columns) {
+  protected int[][] populateMatriz(ArrayList<No> nosInMode, int lines, int columns) {
     int[][] matriz = new int[lines][columns];
 
     for (int colum = 0; colum < nosInMode.size(); colum++) {
@@ -247,7 +242,7 @@ public class ArvoreBinaria {
     return matriz;
   }
 
-  private void printMatriz(int[][] matriz) {
+  protected void printMatriz(int[][] matriz) {
     int lines = matriz.length;
 
     for (int line = 0; line < lines; line++) {

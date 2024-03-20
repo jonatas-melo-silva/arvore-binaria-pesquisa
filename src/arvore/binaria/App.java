@@ -1,6 +1,6 @@
-package arvore;
+package arvore.binaria;
 
-import arvore.ArvoreBinaria.TraversalMode;
+import arvore.TraversalMode;
 
 public class App {
     public static void main(String[] args) {
