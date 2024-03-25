@@ -30,19 +30,23 @@ public class ArvoreAVL extends ArvoreBinaria {
 
     if ((int) parent.getValue() > (int) value) {
       parent.setChildLeft(newNo);
-      this.updateBalanceAfterInsertLeft(newNo);
     } else {
       parent.setChildRight(newNo);
-      this.updateBalanceAfterInsertRight(newNo);
     }
-
+    this.updateBalanceAfterInsert(newNo);
     this.size += 1;
   }
 
-  private void updateBalanceAfterInsertLeft(NoAVL no) {
+  private void updateBalanceAfterInsert(NoAVL no) {
     NoAVL parent = (NoAVL) no.getParent();
 
-    parent.setBalance(parent.getBalance() + 1);
+    boolean isChildLeft = parent.getChildLeft() == no;
+
+    if (isChildLeft) {
+      parent.setBalance(parent.getBalance() + 1);
+    } else {
+      parent.setBalance(parent.getBalance() - 1);
+    }
 
     if (parent.getBalance() == 0) {
       return;
@@ -50,33 +54,6 @@ public class ArvoreAVL extends ArvoreBinaria {
 
     if (parent.getBalance() == 2) {
       this.rebalanceAfterInsertLeft(parent);
-      return;
-    }
-
-    if (this.isRoot(parent)) {
-      return;
-    }
-
-    this.updateBalanceAfterInsertLeft(parent);
-  }
-
-  private void rebalanceAfterInsertLeft(NoAVL no) {
-    NoAVL childLeft = (NoAVL) no.getChildLeft();
-
-    if (childLeft.getBalance() >= 0) {
-      this.rotateSingleRight(no);
-      return;
-    }
-
-    this.rotateDoubleRight(no);
-  }
-
-  private void updateBalanceAfterInsertRight(NoAVL no) {
-    NoAVL parent = (NoAVL) no.getParent();
-
-    parent.setBalance(parent.getBalance() - 1);
-
-    if (parent.getBalance() == 0) {
       return;
     }
 
@@ -89,7 +66,18 @@ public class ArvoreAVL extends ArvoreBinaria {
       return;
     }
 
-    this.updateBalanceAfterInsertRight(parent);
+    this.updateBalanceAfterInsert(parent);
+  }
+
+  private void rebalanceAfterInsertLeft(NoAVL no) {
+    NoAVL childLeft = (NoAVL) no.getChildLeft();
+
+    if (childLeft.getBalance() >= 0) {
+      this.rotateSingleRight(no);
+      return;
+    }
+
+    this.rotateDoubleRight(no);
   }
 
   private void rebalanceAfterInsertRight(NoAVL no) {

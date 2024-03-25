@@ -12,20 +12,14 @@ public class App {
             arvore.add(40);
             arvore.add(50);
             arvore.add(25);
-            // arvore.add(60);
-            // arvore.add(70);
-            // arvore.add(80);
-            // arvore.add(90);
+            arvore.add(60);
+            arvore.add(70);
+            arvore.add(80);
+            arvore.add(90);
 
             System.out.println();
             arvore.display(TraversalMode.IN_ORDER);
             System.out.println(lineAndSize(arvore));
-
-            System.out.println();
-            Object value = arvore.find(20);
-            System.out.println("No encontrado: " + value);
-            NoAVL no = (NoAVL) arvore.search(value);
-            System.out.println("É raiz: " + arvore.isRoot(no));
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
