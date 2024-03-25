@@ -1,41 +1,37 @@
-package arvore.binaria;
+package arvore.avl;
 
 import arvore.TraversalMode;
 
 public class App {
     public static void main(String[] args) {
         try {
-            ArvoreBinaria arvore = new ArvoreBinaria();
+            ArvoreAVL arvore = new ArvoreAVL();
             arvore.add(10);
-            arvore.add(5);
-            arvore.add(2);
-            arvore.add(8);
-            arvore.add(15);
-            arvore.add(22);
-
-            System.out.println();
-            arvore.display(TraversalMode.IN_ORDER);
-            System.out.println(lineAndSize(arvore));
-
-            System.out.println();
+            arvore.add(20);
+            arvore.add(30);
+            arvore.add(40);
+            arvore.add(50);
             arvore.add(25);
+            // arvore.add(60);
+            // arvore.add(70);
+            // arvore.add(80);
+            // arvore.add(90);
+
+            System.out.println();
             arvore.display(TraversalMode.IN_ORDER);
             System.out.println(lineAndSize(arvore));
 
-            // System.out.println();
-            // arvore.remove(5);
-            // arvore.display(TraversalMode.IN_ORDER);
-            // System.out.println(lineAndSize(arvore));
-
             System.out.println();
-            Object value = arvore.find(10); 
+            Object value = arvore.find(20);
             System.out.println("No encontrado: " + value);
+            NoAVL no = (NoAVL) arvore.search(value);
+            System.out.println("É raiz: " + arvore.isRoot(no));
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
     }
 
-    private static String lineAndSize(ArvoreBinaria arvore) {
+    private static String lineAndSize(ArvoreAVL arvore) {
         StringBuilder sb = new StringBuilder();
 
         for (int i = 0; i < arvore.getSize(); i++) {

@@ -14,7 +14,7 @@ public class ArvoreAVL extends ArvoreBinaria {
 
   @Override
   public void add(Object value) {
-    if(!this.hasRoot()) {
+    if (!this.hasRoot()) {
       this.root = new NoAVL(value, null, null, null);
       this.size += 1;
       return;
@@ -22,93 +22,147 @@ public class ArvoreAVL extends ArvoreBinaria {
 
     NoAVL parent = (NoAVL) this.search(value);
 
-    if((int) parent.getValue() == (int) value) {
+    if ((int) parent.getValue() == (int) value) {
       return;
     }
 
     NoAVL newNo = new NoAVL(value, null, null, parent);
 
-    if((int) parent.getValue() > (int) value) {
+    if ((int) parent.getValue() > (int) value) {
       parent.setChildLeft(newNo);
-      this.updateBalanceInAdd(newNo);
+      this.updateBalanceAfterInsertLeft(newNo);
     } else {
       parent.setChildRight(newNo);
-      this.updateBalanceInAdd(newNo);
+      this.updateBalanceAfterInsertRight(newNo);
     }
 
     this.size += 1;
   }
 
-  private void updateBalanceInAdd(NoAVL no) {
-    if(this.isRoot(no)) {
-      return;
-    }
-
+  private void updateBalanceAfterInsertLeft(NoAVL no) {
     NoAVL parent = (NoAVL) no.getParent();
 
-    if(parent.getChildLeft() == no) {
-      parent.setBalance(parent.getBalance() + 1);
-    } else {
-      parent.setBalance(parent.getBalance() - 1);
+    parent.setBalance(parent.getBalance() + 1);
+
+    if (parent.getBalance() == 0) {
+      return;
     }
 
-    if(parent.getBalance() != 0 && (parent.getBalance() < -1 || parent.getBalance() > 1)) {
-      this.rebalance(parent);
+    if (parent.getBalance() == 2) {
+      this.rebalanceAfterInsertLeft(parent);
       return;
-    } 
-    if (parent.getBalance() != 0) {
-      this.updateBalanceInAdd(parent);
     }
+
+    if (this.isRoot(parent)) {
+      return;
+    }
+
+    this.updateBalanceAfterInsertLeft(parent);
   }
 
-  private void rebalance(NoAVL no) {
-    int balance = no.getBalance();
+  private void rebalanceAfterInsertLeft(NoAVL no) {
+    NoAVL childLeft = (NoAVL) no.getChildLeft();
 
-    if(balance == 2) {
-      if(no.containsChildLeft() && ((NoAVL) no.getChildLeft()).getBalance() < 0) {
-        this.rotateDoubleRight(no);
-      }
+    if (childLeft.getBalance() >= 0) {
       this.rotateSingleRight(no);
+      return;
     }
-    if(balance == -2) {
-      if(no.containsChildRight() && ((NoAVL) no.getChildRight()).getBalance() > 0) {
-        this.rotateDoubleLeft(no);
-      }
+
+    this.rotateDoubleRight(no);
+  }
+
+  private void updateBalanceAfterInsertRight(NoAVL no) {
+    NoAVL parent = (NoAVL) no.getParent();
+
+    parent.setBalance(parent.getBalance() - 1);
+
+    if (parent.getBalance() == 0) {
+      return;
+    }
+
+    if (parent.getBalance() == -2) {
+      this.rebalanceAfterInsertRight(parent);
+      return;
+    }
+
+    if (this.isRoot(parent)) {
+      return;
+    }
+
+    this.updateBalanceAfterInsertRight(parent);
+  }
+
+  private void rebalanceAfterInsertRight(NoAVL no) {
+    NoAVL childRight = (NoAVL) no.getChildRight();
+
+    if (childRight.getBalance() <= 0) {
       this.rotateSingleLeft(no);
+      return;
     }
+
+    this.rotateDoubleLeft(no);
+  }
+
+  private void rotateSingleLeft(NoAVL no) {
+    NoAVL parent = (NoAVL) no.getParent();
+    NoAVL childRight = (NoAVL) no.getChildRight();
+    NoAVL childLeft = (NoAVL) childRight.getChildLeft();
+    boolean hasParent = parent != null;
+    boolean isChildLeft = hasParent && parent.getChildLeft() == no;
+
+    childRight.setParent(parent);
+
+    if (!hasParent) {
+      this.root = childRight;
+    }
+    if (isChildLeft) {
+      parent.setChildLeft(childRight);
+    }
+    if (hasParent) {
+      parent.setChildRight(childRight);
+    }
+
+    no.setParent(childRight);
+    childRight.setChildLeft(no);
+
+    if (childLeft != null) {
+      childLeft.setParent(no);
+    }
+    no.setChildRight(childLeft);
+
+    no.setBalance(no.getBalance() + 1 - Math.min(childRight.getBalance(), 0));
+    childRight.setBalance(childRight.getBalance() + 1 + Math.min(no.getBalance(), 0));
   }
 
   private void rotateSingleRight(NoAVL no) {
     NoAVL parent = (NoAVL) no.getParent();
     NoAVL childLeft = (NoAVL) no.getChildLeft();
     NoAVL childRight = (NoAVL) childLeft.getChildRight();
+    boolean hasParent = parent != null;
+    boolean isChildLeft = hasParent && parent.getChildLeft() == no;
 
     childLeft.setParent(parent);
-    if(parent != null) {
-      if(parent.getChildLeft() == no) {
-        parent.setChildLeft(childLeft);
-      } else {
-        parent.setChildRight(childLeft);
-      }
-    } else {
+
+    if (!hasParent) {
       this.root = childLeft;
+    }
+    if (isChildLeft) {
+      parent.setChildLeft(childLeft);
+    }
+    if (hasParent) {
+      parent.setChildRight(childLeft);
     }
 
     no.setParent(childLeft);
     childLeft.setChildRight(no);
 
-    if(childRight != null) {
+    if (childRight != null) {
       childRight.setParent(no);
     }
     no.setChildLeft(childRight);
 
-    no.setBalance(no.getBalance() + 1 - Math.min(childLeft.getBalance(), 0));
-    childLeft.setBalance(childLeft.getBalance() + 1 + Math.max(no.getBalance(), 0));
-  }
-  private void rotateDoubleRight(NoAVL no) {
-    NoAVL childLeft = (NoAVL) no.getChildLeft();
-    this.rotateSingleLeft(childLeft);
-    this.rotateSingleRight(no);
+    no.setBalance(no.getBalance() - 1 - Math.max(childLeft.getBalance(), 0));
+    childLeft.setBalance(childLeft.getBalance() - 1 + Math.min(no.getBalance(), 0));
   }
 
   private void rotateDoubleLeft(NoAVL no) {
@@ -117,8 +171,14 @@ public class ArvoreAVL extends ArvoreBinaria {
     this.rotateSingleLeft(no);
   }
 
+  private void rotateDoubleRight(NoAVL no) {
+    NoAVL childLeft = (NoAVL) no.getChildLeft();
+    this.rotateSingleLeft(childLeft);
+    this.rotateSingleRight(no);
+  }
+
   @Override
-  public void remover(Object value) throws ValueNotFoundException {
-    super.remover(value);
+  public void remove(Object value) throws ValueNotFoundException {
+    super.remove(value);
   }
 }

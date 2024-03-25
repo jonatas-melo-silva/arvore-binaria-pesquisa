@@ -62,7 +62,7 @@ public class ArvoreBinaria {
     this.size += 1;
   }
 
-  protected No search(Object value) { // busca um valor na árvore
+  public No search(Object value) { // busca um valor na árvore
     return this.search(this.root, value);
   }
 
@@ -81,7 +81,7 @@ public class ArvoreBinaria {
     return no;
   }
 
-  public void remover(Object value) throws ValueNotFoundException {
+  public void remove(Object value) throws ValueNotFoundException {
     if (!this.hasRoot()) {
       return;
     }
